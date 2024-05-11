@@ -1,0 +1,79 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model users {
+  id         Int          @id @default(autoincrement())
+  name       String       @unique
+  password   String
+  is_admin   Boolean      @default(false)
+  created_at DateTime     @default(now())
+  updated_at DateTime     @default(now()) @updatedAt
+  temp_items temp_items[]
+  bill_head  bill_head[]
+  groceries  groceries[]
+}
+
+model groceries {
+  id                 Int          @id @default(autoincrement())
+  name               String
+  available_quantity Int
+  hold_quantity      Int
+  price              Float
+  added_by           users        @relation(fields: [user_id], references: [id])
+  discontinue        Boolean      @default(false)
+  created_at         DateTime     @default(now())
+  updated_at         DateTime     @default(now()) @updatedAt
+  temp_items         temp_items[]
+  bill_items         bill_items[]
+  user_id            Int
+}
+
+model temp_items {
+  id         Int       @id @default(autoincrement())
+  grocery    groceries @relation(fields: [grocery_id], references: [id])
+  grocery_id Int
+  users      users     @relation(fields: [user_id], references: [id])
+  user_id    Int
+  quantity   Int
+  price      Float
+  value      Float
+  created_at DateTime  @default(now())
+  updated_at DateTime  @default(now()) @updatedAt
+}
+
+model bill_head {
+  id           Int          @id @default(autoincrement())
+  users        users        @relation(fields: [user_id], references: [id])
+  user_id      Int
+  entry_number String
+  entry_date   String
+  net_amount   Float
+  created_at   DateTime     @default(now())
+  updated_at   DateTime     @default(now()) @updatedAt
+  bill_items   bill_items[]
+}
+
+model bill_items {
+  id         Int       @id @default(autoincrement())
+  grocery    groceries @relation(fields: [grocery_id], references: [id])
+  grocery_id Int
+  head       bill_head @relation(fields: [header_id], references: [id])
+  header_id  Int
+  quantity   Int
+  price      Float
+  value      Float
+  created_at DateTime  @default(now())
+  updated_at DateTime  @default(now()) @updatedAt
+}
