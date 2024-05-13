@@ -1,0 +1,30 @@
+# docker-compose.yml
+services:
+  app:
+    restart: on-failure
+    build: .
+    depends_on:
+      - postgres
+    environment:
+      DATABASE_URL: postgresql://postgres:Abhishek@123@postgres:5432/QP
+      SECRET_KEY: b4190bd143239527e3d8f6cf54ad2428dcb3161d5f8e8942ecf3eac694392ff1
+      NODE_ENV: development
+      PORT: 8000
+    ports:
+      - "8000:8000"
+    command: npm start
+    volumes:
+      - .:/app/
+      - /app/node_modules
+
+  postgres:
+    image: postgres:11
+    ports:
+      - "35432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Abhishek@123
+      POSTGRES_DB: QP
+      DATABASE_URL: postgresql://postgres:Abhishek@123@postgres:35432/QP
+    volumes:
+      - "pg_data:/var/lib/postgresql/data"
