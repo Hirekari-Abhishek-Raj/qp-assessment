@@ -27,4 +27,4 @@ services:
       POSTGRES_DB: QP
       DATABASE_URL: postgresql://postgres:Abhishek@123@postgres:35432/QP
     volumes:
-      - "pg_data:/var/lib/postgresql/data"
+      - "./pg_data:/var/lib/postgresql/data"
